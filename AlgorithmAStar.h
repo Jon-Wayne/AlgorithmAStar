@@ -12,13 +12,13 @@ using namespace cocos2d;
 typedef struct Node Node;
 struct Node
 {
-	int x;
-	int y;
-	int gid;
-	int g;
-	int h;
-	int f;
-	Node *parent;
+    int x;
+    int y;
+    int gid;
+    int g;
+    int h;
+    int f;
+    Node *parent;
 };
 
 class PathNode : public CCObject
@@ -43,27 +43,27 @@ public:
 class AlgorithmAStar : public CCObject
 {
 public:
-	AlgorithmAStar();
-	~AlgorithmAStar();
+    AlgorithmAStar();
+    ~AlgorithmAStar();
     
     static AlgorithmAStar *getInstance();
 
     void setMapInfo(CCTMXTiledMap *map);
     
-	CCArray *search(CCPoint &start, CCPoint &end);
+    CCArray *search(CCPoint &start, CCPoint &end);
 private:
-	Node *getMinFNodeFromOpenTableAndPushIntoCloesdTable(
-										vector<Node *> &openTable, 
-										vector<Node *> &closedTable);
-	int getHWithManhattanDistance(int y, int x, CCPoint end);
-	vector<Node *> *getChildNodesFromCurrNode(Node *currNode);
-	bool isInTable(vector<Node *> &table, int y, int x);
-	Node *getShouldFixedNode(vector<Node *> &openTable, int y, int x);
+    Node *getMinFNodeFromOpenTableAndPushIntoCloesdTable(
+                                        vector<Node *> &openTable, 
+                                        vector<Node *> &closedTable);
+    int getHWithManhattanDistance(int y, int x, CCPoint end);
+    vector<Node *> *getChildNodesFromCurrNode(Node *currNode);
+    bool isInTable(vector<Node *> &table, int y, int x);
+    Node *getShouldFixedNode(vector<Node *> &openTable, int y, int x);
 private:
-	CCTMXTiledMap *m_pTiledMap;
+    CCTMXTiledMap *m_pTiledMap;
     int *m_pMap;
-	int m_nRow;
-	int m_nCol;
+    int m_nRow;
+    int m_nCol;
 };
 
 #endif //__ALGORITHM_ASTAR_H__

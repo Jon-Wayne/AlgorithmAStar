@@ -4,9 +4,9 @@ static AlgorithmAStar *_instance = NULL;
 
 AlgorithmAStar::AlgorithmAStar()
 {
-	m_pMap = NULL;
-	m_nRow = 0;
-	m_nCol = 0;
+    m_pMap = NULL;
+    m_nRow = 0;
+    m_nCol = 0;
 }
 
 
@@ -48,14 +48,14 @@ void AlgorithmAStar::setMapInfo(CCTMXTiledMap *map)
 
 CCArray *AlgorithmAStar::search(CCPoint &start, CCPoint &end)
 {   
-	if ((int)start.x == (int)end.x && (int)start.y == (int)end.y)
-		return NULL;
+    if ((int)start.x == (int)end.x && (int)start.y == (int)end.y)
+        return NULL;
 
     //CCLog(@"------------- map data array ---------------");
     /*for (int y=0; y<m_nRow; ++y)
-	{
+    {
         for (int x=0; x<m_nCol; ++x)
-		{
+        {
             printf("%d ", m_pMap[y*m_nCol + x]);
         }
         printf("\n");
@@ -67,7 +67,7 @@ CCArray *AlgorithmAStar::search(CCPoint &start, CCPoint &end)
     //设置起点
     Node *startNode = (Node *)malloc(sizeof(Node));
     startNode->y = (int)start.y;
-	startNode->x = (int)start.x;
+    startNode->x = (int)start.x;
     startNode->gid = m_pMap[startNode->y*m_nCol + startNode->x];
     startNode->parent = NULL;
 
@@ -76,21 +76,21 @@ CCArray *AlgorithmAStar::search(CCPoint &start, CCPoint &end)
     startNode->h = getHWithManhattanDistance(startNode->y, startNode->x, end);
     startNode->f = 0;
     openTable.push_back(startNode);
-	//cout<<"放入("<<startNode->y<<", "<<startNode->x<<") - "<<startNode->f;
+    //cout<<"放入("<<startNode->y<<", "<<startNode->x<<") - "<<startNode->f;
     
     Node *overNode = NULL;
 
     //两个终止条件：1.列表为空，此时为无法到达 2.终节点被添加到开放列表中，此时为找到了所求路径
     //循环结束条件1的判定
     while (!openTable.empty())
-	{
+    {
         //从openTable中找到f值最小的节点，把当前节点从openTable中删除，加入到closedTable中，作为当前节点并返回其指针
         Node *currNode = getMinFNodeFromOpenTableAndPushIntoCloesdTable(openTable, closedTable);
         //cout<<"当前节点：("<<currNode->y<<", "<<currNode->x<<")-"<<currNode->g<<", "<<currNode->h<<", "<<currNode->f<<"\n";
         
-		//循环结束条件2的判定
+        //循环结束条件2的判定
         if (currNode->y==(int)end.y && currNode->x==(int)end.x)
-		{
+        {
             overNode = currNode;
             //cout<<"找到了终节点\n";
             break;
@@ -101,22 +101,22 @@ CCArray *AlgorithmAStar::search(CCPoint &start, CCPoint &end)
 
         //并遍历各节点继续查找
         for (int i=0; i<childNodes->size(); i++)
-		{
+        {
             Node *node = (*childNodes)[i];
             
             //若该节点不可通行，则不采取任何操作
             if (node->gid == 0)
-			{
+            {
                 //cout<<" 当前子节点：("<<node->y<<", "<<node->x<<")-"<<node->g<<", "<<node->h<<","<<node->f<<"是无效节点\n";
                 //该无效节点的指针由malloc创建，但是又不会被加入到列表里，故现在就释放
                 free(node);
                 node = NULL;
                 continue;
             }
-			
-			//若该节点已在closedTable中，则不采取任何操作
+            
+            //若该节点已在closedTable中，则不采取任何操作
             if (isInTable(closedTable, node->y, node->x))
-			{
+            {
                 //cout<<" 当前子节点：("<<node->y<<", "<<node->x<<")-"<<node->g<<", "<<node->h<<","<<node->f<<"已在closed\n";
                 //该无效节点的指针由malloc创建，因为已经存在于close中，是又不会被加入到close表里的，故现在就释放
                 free(node);
@@ -126,10 +126,10 @@ CCArray *AlgorithmAStar::search(CCPoint &start, CCPoint &end)
             
             //若该节点不在openTable中
             if (!isInTable(openTable, node->y, node->x))
-			{
+            {
                 node->parent = currNode;
-				int g = (currNode->y == node->y || currNode->x == node->x) ? 10 : 14;
-				node->g = currNode->g + g;
+                int g = (currNode->y == node->y || currNode->x == node->x) ? 10 : 14;
+                node->g = currNode->g + g;
                 node->h = getHWithManhattanDistance(node->y, node->x, end);
                 node->f = node->g + node->h;
                 openTable.push_back(node);
@@ -137,7 +137,7 @@ CCArray *AlgorithmAStar::search(CCPoint &start, CCPoint &end)
             }
             //若该节点已经在openTable中，且满足修改条件，则修改表中的那个，现有的这个释放
             else
-			{
+            {
                 int g = (currNode->y == node->y || currNode->x == node->x) ? 10 : 14;
                 if ( currNode->g + g < node->g) {
                     //取出表里的那个节点的指针
@@ -160,24 +160,24 @@ CCArray *AlgorithmAStar::search(CCPoint &start, CCPoint &end)
     }
     
     if (overNode != NULL)
-	{
-		CCArray *pathNodes = CCArray::create();
+    {
+        CCArray *pathNodes = CCArray::create();
         for (Node *currNode=overNode; currNode->parent!=NULL; currNode=currNode->parent)
-		{
-			PathNode *pathNode = PathNode::create();
-			pathNode->y = currNode->y;
-			pathNode->x = currNode->x;
-			pathNode->gid = currNode->gid;
-			pathNodes->addObject(pathNode);
+        {
+            PathNode *pathNode = PathNode::create();
+            pathNode->y = currNode->y;
+            pathNode->x = currNode->x;
+            pathNode->gid = currNode->gid;
+            pathNodes->addObject(pathNode);
         }
 
-		return pathNodes;
-	}
-	else
-	{
+        return pathNodes;
+    }
+    else
+    {
         cout<<"没有合适的路径\n";
-		return NULL;
-	}
+        return NULL;
+    }
 }
 
 /**
@@ -190,9 +190,9 @@ Node *AlgorithmAStar::getMinFNodeFromOpenTableAndPushIntoCloesdTable(vector<Node
     Node *minFNode = NULL;
     
     for (vector<Node *>::iterator it=openTable.begin(); it!=openTable.end(); it++)
-	{
+    {
         if ((*it)->f < currMinF)
-		{
+        {
             currMinF = (*it)->f;
             y = (*it)->y;
             x = (*it)->x;
@@ -200,18 +200,18 @@ Node *AlgorithmAStar::getMinFNodeFromOpenTableAndPushIntoCloesdTable(vector<Node
     }
     
     for (vector<Node *>::iterator i=openTable.begin(); i!=openTable.end(); )
-	{
+    {
         if ((*i)->y==y && (*i)->x==x)
-		{
+        {
             minFNode = (*i);
             closedTable.push_back((*i));
             i = openTable.erase(i);
         }
-		else
-			i++;
+        else
+            i++;
     }
 
-	//cout<<"得到最小f的是("<< minFNode->y <<", "<<minFNode->x<<")";
+    //cout<<"得到最小f的是("<< minFNode->y <<", "<<minFNode->x<<")";
     
     return minFNode;
 }
@@ -233,7 +233,7 @@ vector<Node *> *AlgorithmAStar::getChildNodesFromCurrNode(Node *currNode)
     
     //左
     if (x-1 >= 0)
-	{
+    {
         Node *node = (Node *)malloc(sizeof(Node));
         node->x = x - 1;
         node->y = y;
@@ -242,7 +242,7 @@ vector<Node *> *AlgorithmAStar::getChildNodesFromCurrNode(Node *currNode)
         /*
         //左上
         if (y-1 >= 0)
-		{
+        {
             Node *node = (Node *)malloc(sizeof(Node));
             node->x = x - 1;
             node->y = y - 1;
@@ -251,7 +251,7 @@ vector<Node *> *AlgorithmAStar::getChildNodesFromCurrNode(Node *currNode)
         }
         //左下
         if (y+1 < m_nRow)
-		{
+        {
             Node *node = (Node *)malloc(sizeof(Node));
             node->x = x - 1;
             node->y = y + 1;
@@ -262,7 +262,7 @@ vector<Node *> *AlgorithmAStar::getChildNodesFromCurrNode(Node *currNode)
     }
     //右
     if (x+1 < m_nRow)
-	{
+    {
         Node *node = (Node *)malloc(sizeof(Node));
         node->x = x + 1;
         node->y = y;
@@ -271,7 +271,7 @@ vector<Node *> *AlgorithmAStar::getChildNodesFromCurrNode(Node *currNode)
         /*
         //右上
         if (y-1 >= 0)
-		{
+        {
             Node *node = (Node *)malloc(sizeof(Node));
             node->x = x + 1;
             node->y = y - 1;
@@ -280,7 +280,7 @@ vector<Node *> *AlgorithmAStar::getChildNodesFromCurrNode(Node *currNode)
         }
         //右下
         if (y+1 < m_nRow)
-		{
+        {
             Node *node = (Node *)malloc(sizeof(Node));
             node->x = x + 1;
             node->y = y + 1;
@@ -291,7 +291,7 @@ vector<Node *> *AlgorithmAStar::getChildNodesFromCurrNode(Node *currNode)
     }
     //上
     if (y-1 >= 0)
-	{
+    {
         Node *node = (Node *)malloc(sizeof(Node));
         node->x = x;
         node->y = y - 1;
@@ -300,7 +300,7 @@ vector<Node *> *AlgorithmAStar::getChildNodesFromCurrNode(Node *currNode)
     }
     //下
     if (y+1 < m_nRow)
-	{
+    {
         Node *node = (Node *)malloc(sizeof(Node));
         node->x = x;
         node->y = y + 1;
